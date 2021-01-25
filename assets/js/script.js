@@ -13,7 +13,7 @@ const rowItem$ = $("<div class='row time-block'>");
 const colItem$ = $("<div class='col-12 table-responsive'>");
 const renderTable$ = $("<table class='table'>");
 const renderTableBody$ = $("<tbody>");
-const tableTr$ = $("<tr class='tr-row'>");
+// const tableTr$ = $("<tr class='tr-row'>");
 // const textAreaInput = $("<textarea class='description'>");
 const storageKey = "myCalendar";
 
@@ -34,21 +34,16 @@ $(colItem$).append(renderTable$);
 
 
 
-// Return the current day, month and day
+// Return the current day, month and day at top of page
 $("#currentDay").text(dayOfWeek + ", "+ currentMonth + " " + dayOfMonth);
 
 let output = "";
 for(let i = 0; i < timeOfDay.length; i++) {
-    // output html elements
-    // console.log(timeOfDay[i]);
+   
     output = timeOfDay[i]; // 9AM, 10AM etc
-    
+    let tableTr$ = $("<tr class='tr-row'>");
 
-    // console.log(output);
-
-    // Append <tr> inside of <tbody>
-    $(renderTableBody$).append(tableTr$);
-
+  
     // Return the time inside first <td>
     const timeTd$ = $("<td class='hour time-of-day'>").text(output).attr("data-time", computerTimeOfDay[i]); // 9-17
 
@@ -60,7 +55,12 @@ for(let i = 0; i < timeOfDay.length; i++) {
 
     // Append the 3 <td>s inside a <tr>
     $(tableTr$).append(timeTd$, textareaTd$, saveBtnTd$);
+
+    
+     // Append <tr> inside of <tbody>
+     $(renderTableBody$).append(tableTr$);
    
+    
 
 }
  // Append the <tbody> inside <table>
@@ -71,25 +71,31 @@ for(let i = 0; i < timeOfDay.length; i++) {
  function getCurrentHour() {
    
         // Get data-time attribute which is computerTimeOfDay
-        let timeDataAttr = parseInt($("td.hour").attr("data-time")); 
-    //    console.log(timeDataAttr);
+        
+        const arrOfHours = $(".hour");
+      
+       
         // Compare if data-time attribute matches the current hour set by computer
         /* Return appropriate class depending if the hour is before, current or after
          current hour */
-        if(timeDataAttr === currentHourNow) {
+        if(arrOfHours === currentHourNow) {
             $(".description-details").addClass("present");
         }
-        if(timeDataAttr < currentHourNow) {
+        if(arrOfHours < currentHourNow) {
             $(".description-details").addClass("past");
         }
-        if (timeDataAttr > currentHourNow){
+        if (arrOfHours > currentHourNow){
             $(".description-details").addClass("future");
         }
+        
     
  }
-//  getCurrentHour();
+
 
 // Local Storage
+$(".saveBtn").on("click", saveToLocalStorage) 
+  
+
 function saveToLocalStorage() {
     // Gets local storage
     const getStorage = function() {
@@ -100,17 +106,14 @@ function saveToLocalStorage() {
     const setStorage = function(value) {
         localStorage.setItem(storageKey, JSON.stringify(value));
     }
-    $(".saveBtn").on("click", function(e) {
-        console.log("I have been clicked!");
         
         const payload = {
             dayDetails: $("textarea").val().trim(),
-            timeDetails: $(this).parent()
+            //timeDetails: $(this).parent()
 
         }
-        console.log($(this).parent());
+
         setStorage(payload);
-    });
+
 }
 
-saveToLocalStorage();
